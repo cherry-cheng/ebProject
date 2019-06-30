@@ -10,4 +10,4 @@ axios.interceptors.request.use(function (config) {
   return config;
 })
 
-Vue.prototype.$http = axios;
+Vue.prototype.$http = axios; // 将axios添加到 Vue的原型， 这样一切vue实例都可以使用该对象
