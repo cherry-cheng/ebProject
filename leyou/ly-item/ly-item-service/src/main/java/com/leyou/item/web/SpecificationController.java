@@ -1,14 +1,12 @@
 package com.leyou.item.web;
 
 import com.leyou.item.pojo.SpecGroup;
+import com.leyou.item.pojo.SpecParam;
 import com.leyou.item.pojo.Specification;
 import com.leyou.item.service.SpecificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +26,17 @@ public class SpecificationController {
         return ResponseEntity.ok(specService.queryGroupByCid(cid));
     }
 
+    /**
+     * 根据组id查询参数
+     * @param gid
+     * @return
+     */
+    @GetMapping("params")
+    public ResponseEntity<List<SpecParam>> queryParamByGid(@RequestParam("gid")Long gid) {
+        return ResponseEntity.ok(specService.queryParamByGid(gid));
+    }
+
+    /*-----------------------------------------------------------------------------------*/
     /**
      * 旧版套路（暂用）
      * @param id
