@@ -12,6 +12,7 @@ public enum ExceptionEnum {
     UPLOAD_FILE_ERROR(500, "文件上传失败！"),
     INVALID_FILE_TYPE(400, "无效的文件类型！"),
     CATEGORY_NOT_FOUND(404, "商品分类没查到"),
+    SPEC_GROUP_NOT_FOUND(404, "商品规格组没查到"),
     BRAND_NOT_FOUND(404, "品牌不存在"),
     ;
     private int code;
