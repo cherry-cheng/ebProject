@@ -74,13 +74,16 @@
       submit() {
         // 表单校验
         if (this.$refs.brandForm.validate()) {
-          this.brand.categories = this.brand.categories.map(c => c.id);
-          this.brand.letter = this.brand.letter.toUpperCase();
+          const {categories, letter, ...params} = this.brand;
+          params.cids = categories.map(c => c.id).join(",");
+          params.letter = letter.toUpperCase();
+          // this.brand.categories = this.brand.categories.map(c => c.id);
+          // this.brand.letter = this.brand.letter.toUpperCase();
           // 将数据提交到后台
           this.$http({
             method: this.isEdit ? 'put' : 'post',
             url: '/item/brand',
-            data: this.$qs.stringify(this.brand)
+            data: this.$qs.stringify(params)
           }).then(() => {
             // 关闭窗口
             this.$message.success("保存成功！");

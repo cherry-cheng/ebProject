@@ -10,6 +10,7 @@ import com.leyou.item.pojo.Brand;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
@@ -46,4 +47,20 @@ public class BrandService {
         return new PageResult<Brand>(info.getTotal(), info.getPages(), list);
     }
 
+    @Transactional
+    public void saveBrand(Brand brand, List<Long> cids) {
+        // 新增品牌
+        brand.setId(null);
+        int count = brandMapper.insert(brand);
+        if (count != 1) {
+            throw new LyException(ExceptionEnum.BRAND_SAVE_ERROR);
+        }
+        //新增中间表
+        for (Long cid : cids) {
+            count = brandMapper.insertCategoryBrand(cid, brand.getId());//新增完之后，整个brand会自动回显所有数据
+            if (count != 1) {
+                throw new LyException(ExceptionEnum.BRAND_SAVE_ERROR);
+            }
+        }
+    }
 }

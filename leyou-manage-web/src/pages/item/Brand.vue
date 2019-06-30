@@ -165,7 +165,7 @@
             rows: this.pagination.rowsPerPage,
             sortBy: this.pagination.sortBy,
             desc: this.pagination.descending,
-            key: this.key,
+            key: this.search,
           }
         }).then(resp => {
           this.items = resp.data.items;
