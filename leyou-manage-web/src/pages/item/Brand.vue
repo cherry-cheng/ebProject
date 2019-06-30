@@ -152,11 +152,26 @@
       getDataFromApi() {
         this.loading = true;
         // 200ms后返回假数据
-        window.setTimeout(() => {
-          this.items = brandData.slice(0,4);
-          this.totalItems = 100
+        // window.setTimeout(() => {
+        //   this.items = brandData.slice(0,4);
+        //   this.totalItems = 100
+        //   this.loading = false;
+        // }, 200)
+
+        this.$http.get("/item/brand/page", {
+          params: {
+            // 搜索条件
+            page: this.pagination.page,
+            rows: this.pagination.rowsPerPage,
+            sortBy: this.pagination.sortBy,
+            desc: this.pagination.descending,
+            key: this.key,
+          }
+        }).then(resp => {
+          this.items = resp.data.items;
+          this.totalItems = resp.data.total;
           this.loading = false;
-        }, 200)
+        })
       }
     }
   }
