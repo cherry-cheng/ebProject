@@ -64,7 +64,7 @@ public class GoodsService {
     private void loadCategoryAndBrandName(List<Spu> spus) {
         for (Spu spu : spus) {
             // 处理分类名称
-            // 处理的很巧妙，代码精炼啊~~~~~
+            // 处理的很巧妙，代码精炼啊~~~~~  lambda表达式
             List<String> names = categoryService.queryByIds(Arrays.asList(spu.getCid1(), spu.getCid2(), spu.getCid3()))
                     .stream().map(Category::getName).collect(Collectors.toList());
             spu.setCname(StringUtils.join(names, "/"));
