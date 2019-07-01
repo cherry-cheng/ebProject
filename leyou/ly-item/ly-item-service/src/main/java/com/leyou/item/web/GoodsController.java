@@ -48,6 +48,17 @@ public class GoodsController {
     }
 
     /**
+     * 商品修改
+     * @param spu
+     * @return
+     */
+    @PutMapping("goods")
+    public ResponseEntity<Void> updateGoods(@RequestBody Spu spu) {
+        goodsService.updateGoods(spu);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();  //没有返回值
+    }
+
+    /**
      * 根据spu的id查询详情的detail
      * @param spuId
      * @return

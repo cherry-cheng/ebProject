@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 public enum ExceptionEnum {
     BRAND_SAVE_ERROR(500, "新增品牌失败！"),
     GOODS_SAVE_ERROR(500, "新增商品失败！"),
+    GOODS_UPDATE_ERROR(500, "商品更新失败！"),
     UPLOAD_FILE_ERROR(500, "文件上传失败！"),
     INVALID_FILE_TYPE(400, "无效的文件类型！"),
+    GOOD_ID_CANNOT_BE_NULL(400, "商品id不能为空！"),
     CATEGORY_NOT_FOUND(404, "商品分类没查到"),
     SPEC_GROUP_NOT_FOUND(404, "商品规格组没查到"),
     SPEC_PARAM_NOT_FOUND(404, "商品规格参数不存在"),
