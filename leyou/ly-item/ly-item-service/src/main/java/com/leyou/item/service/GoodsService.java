@@ -5,17 +5,21 @@ import com.github.pagehelper.PageInfo;
 import com.leyou.common.enums.ExceptionEnum;
 import com.leyou.common.exception.LyException;
 import com.leyou.common.vo.PageResult;
+import com.leyou.item.mapper.SkuMapper;
 import com.leyou.item.mapper.SpuDetailMappter;
 import com.leyou.item.mapper.SpuMapper;
-import com.leyou.item.pojo.Category;
-import com.leyou.item.pojo.Spu;
+import com.leyou.item.mapper.StockMapper;
+import com.leyou.item.pojo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +29,10 @@ public class GoodsService {
     private SpuMapper spuMapper;
     @Autowired
     private SpuDetailMappter spuDetailMappter;
+    @Autowired
+    private SkuMapper skuMapper;
+    @Autowired
+    private StockMapper stockMapper;
 
     @Autowired
     private CategoryService categoryService;
@@ -71,5 +79,48 @@ public class GoodsService {
             // 处理品牌名称
             spu.setBname(brandService.queryById(spu.getBrandId()).getName());
         }
+    }
+
+    @Transactional
+    public void saveGoods(Spu spu) {
+        // 新增spu
+        spu.setId(null);
+        spu.setCreateTime(new Date());
+        spu.setLastUpdateTime(spu.getCreateTime());
+        spu.setSaleable(true);
+        spu.setValid(false);
+
+        int count = spuMapper.insert(spu);
+        if (count != 1) {
+            throw new LyException(ExceptionEnum.GOODS_SAVE_ERROR);
+        }
+
+        // 新增spu detail
+        SpuDetail detail = spu.getSpuDetail();
+        detail.setSpuId(spu.getId());
+        spuDetailMappter.insert(detail);
+
+        List<Stock> stockList = new ArrayList<Stock>();
+        // 新增sku
+        List<Sku> skus = spu.getSkus();
+        for (Sku sku : skus) {
+            sku.setCreateTime(new Date());
+            sku.setLastUpdateTime(sku.getCreateTime());
+            sku.setSpuId(spu.getId());
+
+            count = skuMapper.insert(sku);
+            if (count != 1) {
+                throw new LyException(ExceptionEnum.GOODS_SAVE_ERROR);
+            }
+            // 新增库存
+            Stock stock = new Stock();
+            stock.setSkuId(sku.getId());
+            stock.setStock(sku.getStock());
+
+            stockList.add(stock);
+        }
+        // 批量新增库存
+//        stockMapper.insertList(stockList);//批量新增的主键id必须是id，不能命名为其他的，故这里没法儿使用。
+        stockMapper.insertList(stockList);//  必须用additional的insertmapper
     }
 }

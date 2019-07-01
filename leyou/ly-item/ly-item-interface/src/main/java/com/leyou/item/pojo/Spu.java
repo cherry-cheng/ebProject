@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 // Standard Product Unit(标准产品单位)，一组具有共同属性的商品集
 @Table(name = "tb_spu")
@@ -33,4 +34,10 @@ public class Spu {
     private String bname;
     @Transient
     private String cname;
+
+    @Transient
+    private List<Sku> skus;
+
+    @Transient
+    private SpuDetail spuDetail;
 }
