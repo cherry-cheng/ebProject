@@ -17,10 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,5 +122,45 @@ public class GoodsService {
         if (count != 1) {
             throw new LyException(ExceptionEnum.GOODS_SAVE_ERROR);
         }
+    }
+
+    public SpuDetail queryDetailById(Long spuId) {
+        SpuDetail spuDetail = spuDetailMappter.selectByPrimaryKey(spuId);
+        if (spuDetail == null) {
+            throw new LyException(ExceptionEnum.GOODS_DETAIL_NOT_FOUND);
+        }
+        return spuDetail;
+    }
+
+    public List<Sku> querySkuBySpuId(Long spuId) {
+        // 查询sku
+        Sku sku = new Sku();
+        sku.setSpuId(spuId);
+        List<Sku> skus = skuMapper.select(sku);
+        if(CollectionUtils.isEmpty(skus)) {
+            throw new LyException(ExceptionEnum.GOODS_SKU_NOT_FOUND);
+        }
+
+        // 查询库存(平时写法)
+        /*for (Sku s : skus) {
+            Stock stock = stockMapper.selectByPrimaryKey(s.getId());
+            if (stock == null) {
+                throw new LyException(ExceptionEnum.GOODS_STOCK_NOT_FOUND);
+            }
+            s.setStock(stock.getStock());
+        }*/
+
+        // 查询库存(高级写法)
+        List<Long> ids = skus.stream().map(Sku::getId).collect(Collectors.toList());
+        List<Stock> stockList = stockMapper.selectByIdList(ids);
+        if (CollectionUtils.isEmpty(stockList)) {
+            throw new LyException(ExceptionEnum.GOODS_STOCK_NOT_FOUND);
+        }
+        // 我们把stock变成一个map,其key是sku的id，值是库存-----------------写法完美，效率更高
+        Map<Long, Integer> stockMap = stockList.stream()
+                .collect(Collectors.toMap(Stock::getSkuId, Stock::getStock));
+        skus.forEach(s -> s.setStock(stockMap.get(s.getId())));
+        return skus;
+
     }
 }

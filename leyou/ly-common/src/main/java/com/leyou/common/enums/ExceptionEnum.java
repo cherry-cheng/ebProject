@@ -17,6 +17,9 @@ public enum ExceptionEnum {
     SPEC_PARAM_NOT_FOUND(404, "商品规格参数不存在"),
     BRAND_NOT_FOUND(404, "品牌不存在"),
     GOODS_NOT_FOUND(404, "商品不存在"),
+    GOODS_SKU_NOT_FOUND(404, "商品sku不存在"),
+    GOODS_STOCK_NOT_FOUND(404, "商品库存不存在"),
+    GOODS_DETAIL_NOT_FOUND(404, "商品详情不存在"),
     ;
     private int code;
     private String msg;
