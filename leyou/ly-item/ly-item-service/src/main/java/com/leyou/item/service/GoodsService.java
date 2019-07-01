@@ -121,6 +121,9 @@ public class GoodsService {
         }
         // 批量新增库存
 //        stockMapper.insertList(stockList);//批量新增的主键id必须是id，不能命名为其他的，故这里没法儿使用。
-        stockMapper.insertList(stockList);//  必须用additional的insertmapper
+        count = stockMapper.insertList(stockList);//  必须用additional的insertmapper
+        if (count != 1) {
+            throw new LyException(ExceptionEnum.GOODS_SAVE_ERROR);
+        }
     }
 }
