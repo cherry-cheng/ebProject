@@ -2,6 +2,7 @@ package cn.itcast.rabbitmq.fanout;
 
 import cn.itcast.rabbitmq.util.ConnectionUtil;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 
@@ -16,8 +17,9 @@ public class Send {
         Channel channel = connection.createChannel();
         
         // 声明exchange，指定类型为fanout
-        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
-        
+//        channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.FANOUT);
+
         // 消息内容
         String message = "Hello everyone";
         // 发布消息到Exchange
