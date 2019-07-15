@@ -23,6 +23,8 @@ public enum ExceptionEnum {
     GOODS_STOCK_NOT_FOUND(404, "商品库存不存在"),
     GOODS_DETAIL_NOT_FOUND(404, "商品详情不存在"),
     INVALID_USER_DATA_TYPE(400, "用户数据类型无效"),
+    INVALID_VERIFY_CODE(400, "无效的验证码"),
+
     ;
     private int code;
     private String msg;
