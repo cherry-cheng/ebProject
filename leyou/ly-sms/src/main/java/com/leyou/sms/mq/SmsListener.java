@@ -46,6 +46,9 @@ public class SmsListener {
         // 处理消息
         try {
             smsUtils.sendSms(phone, prop.getSignName(), prop.getVerifyCodeTemplate(), JsonUtils.serialize(msg));
+
+            // 发送短信日志
+            log.info("[短信服务]，发送短信验证码，手机号:{}", phone);
         } catch (Exception e) {
             log.error("[短信服务] 发送短信异常, 手机号码：{}", phone, e);
             return;
