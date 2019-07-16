@@ -24,6 +24,7 @@ public enum ExceptionEnum {
     GOODS_DETAIL_NOT_FOUND(404, "商品详情不存在"),
     INVALID_USER_DATA_TYPE(400, "用户数据类型无效"),
     INVALID_VERIFY_CODE(400, "无效的验证码"),
+    INVALID_USERNAME_PASSWORD(400, "无效的用户名或密码错误"),
 
     ;
     private int code;
