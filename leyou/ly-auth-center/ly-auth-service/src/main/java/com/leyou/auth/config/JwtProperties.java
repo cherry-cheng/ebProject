@@ -17,6 +17,7 @@ public class JwtProperties {
     private String priKeyPath;
     private int expire;
     private String cookieName;
+    private int cookieMaxAge;
 
     private PublicKey publicKey; // 公钥
     private PrivateKey privateKey; // 私钥

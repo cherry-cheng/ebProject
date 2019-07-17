@@ -20,4 +20,5 @@ ly:
     pubKeyPath: E:\develop\rsa\rsa.pub # 公钥地址
     priKeyPath: E:\develop\rsa\rsa.pri # 私钥地址
     expire: 30 # 过期时间,单位分钟
+    cookieMaxAge: 1800 # cookie的过期时间
     cookieName: LY_TOKEN

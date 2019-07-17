@@ -49,7 +49,8 @@ public class AuthController {
     }
 
     @GetMapping("verify")
-    public ResponseEntity<UserInfo> verify(@CookieValue("LY_TOKEN") String token) {
+    public ResponseEntity<UserInfo> verify(@CookieValue("LY_TOKEN") String token,
+                                           HttpServletResponse response, HttpServletRequest request) {
         if (StringUtils.isBlank(token)) {
             // 如果没有token,证明未登录，返回403
             throw new LyException(ExceptionEnum.UNAUTHORIZED);
@@ -57,6 +58,12 @@ public class AuthController {
         try {
             // 解析token
             UserInfo info = JwtUtils.getInfoFromToken(token, prop.getPublicKey());
+
+            // 刷新token,重新生成token
+            String newToken = JwtUtils.generateToken(info, prop.getPrivateKey(), prop.getExpire());
+
+            // 将token写入cookie,并指定httpOnly为true，防止通过JS获取和修改
+            CookieUtils.setCookie(request, response, cookieName, newToken);
 
             // 已登录，返回用户信息
             return ResponseEntity.ok(info);

@@ -164,14 +164,7 @@ public class GoodsService {
 
         // 查询库存(高级写法)
         List<Long> ids = skus.stream().map(Sku::getId).collect(Collectors.toList());
-        List<Stock> stockList = stockMapper.selectByIdList(ids);
-        if (CollectionUtils.isEmpty(stockList)) {
-            throw new LyException(ExceptionEnum.GOODS_STOCK_NOT_FOUND);
-        }
-        // 我们把stock变成一个map,其key是sku的id，值是库存-----------------写法完美，效率更高
-        Map<Long, Integer> stockMap = stockList.stream()
-                .collect(Collectors.toMap(Stock::getSkuId, Stock::getStock));
-        skus.forEach(s -> s.setStock(stockMap.get(s.getId())));
+        loadStockInSku(ids, skus);
         return skus;
 
     }
@@ -224,5 +217,26 @@ public class GoodsService {
         // 查询detail
         spu.setSpuDetail(queryDetailById(id));
         return spu;
+    }
+
+    public List<Sku> querySkuByIds(List<Long> ids) {
+        List<Sku> skus = skuMapper.selectByIdList(ids);
+        if (CollectionUtils.isEmpty(skus)) {
+            throw new LyException(ExceptionEnum.GOODS_SKU_NOT_FOUND);
+        }
+        loadStockInSku(ids, skus);
+        return skus;
+    }
+
+    private void loadStockInSku(List<Long> ids, List<Sku> skus) {
+        // 查询库存(高级写法)
+        List<Stock> stockList = stockMapper.selectByIdList(ids);
+        if (CollectionUtils.isEmpty(stockList)) {
+            throw new LyException(ExceptionEnum.GOODS_STOCK_NOT_FOUND);
+        }
+        // 我们把stock变成一个map,其key是sku的id，值是库存-----------------写法完美，效率更高
+        Map<Long, Integer> stockMap = stockList.stream()
+                .collect(Collectors.toMap(Stock::getSkuId, Stock::getStock));
+        skus.forEach(s -> s.setStock(stockMap.get(s.getId())));
     }
 }
