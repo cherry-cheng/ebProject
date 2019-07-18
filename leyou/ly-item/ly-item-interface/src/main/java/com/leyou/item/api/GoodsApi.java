@@ -1,9 +1,11 @@
 package com.leyou.item.api;
 
+import com.leyou.common.dto.CartDTO;
 import com.leyou.common.vo.PageResult;
 import com.leyou.item.pojo.Sku;
 import com.leyou.item.pojo.Spu;
 import com.leyou.item.pojo.SpuDetail;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,8 +36,23 @@ public interface GoodsApi {
     List<Sku> querySkuBySpuId(@RequestParam("id") Long spuId);
 
     /**
-     * 根据spu的idspu
+     * 根据spu的id查询spu
      */
     @GetMapping("spu/{id}")
     Spu querySpuById(@PathVariable("id") Long id);
+
+    /**
+     * 根据id批量查询sku
+     * @param ids
+     * @return
+     */
+    @GetMapping("sku/list/ids")
+    List<Sku> querySkuByIds(@RequestParam("id") List<Long> ids);
+
+    /**
+     * 减库存
+     * @param carts
+     */
+    @PostMapping("stock/decrease")
+    void decreaseStock(@RequestBody List<CartDTO> carts);
 }
