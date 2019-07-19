@@ -18,11 +18,13 @@ import com.leyou.order.mapper.OrderStatusMapper;
 import com.leyou.order.pojo.Order;
 import com.leyou.order.pojo.OrderDetail;
 import com.leyou.order.pojo.OrderStatus;
+import com.leyou.order.utils.PayHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.NotNull;
 import java.util.*;
@@ -45,6 +47,9 @@ public class OrderService {
 
     @Autowired
     private GoodsClient goodsClient;
+
+    @Autowired
+    private PayHelper payHelper;
 
     @Transactional
     public Long createOrder(OrderDTO orderDTO) {
@@ -133,5 +138,55 @@ public class OrderService {
         goodsClient.decreaseStock(cartDTOS);
 
         return orderId;
+    }
+
+    public Order queryOrderById(Long id) {
+        // 查询订单
+        Order order = orderMapper.selectByPrimaryKey(id);
+        if (order == null) {
+            // 不存在
+            throw new LyException(ExceptionEnum.ORDER_NOT_FOUND);
+        }
+
+        // 查询订单详情
+        OrderDetail detail = new OrderDetail();
+        detail.setOrderId(id);
+        List<OrderDetail> details = orderDetailMapper.select(detail);
+        if (CollectionUtils.isEmpty(details)) {
+            throw new LyException(ExceptionEnum.ORDER_DETAIL_NOT_FOUND);
+        }
+        order.setOrderDetails(details);
+
+        // 查询订单状态
+        OrderStatus orderStatus = orderStatusMapper.selectByPrimaryKey(id);
+        if (orderStatus == null) {
+            // 不存在
+            throw new LyException(ExceptionEnum.ORDER_STATUS_NOT_FOUND);
+        }
+        order.setOrderStatus(orderStatus);
+
+        return order;
+    }
+
+    public String createPayUrl(Long orderId) {
+        // 查询订单
+        Order order = queryOrderById(orderId);
+        // 判断订单状态
+        Integer status = order.getOrderStatus().getStatus();
+        if (status != OrderStatusEnum.UN_PAY.value()) {
+            // 订单状态异常
+            throw new LyException(ExceptionEnum.ORDER_STATUS_ERROR);
+        }
+        // 支付金额
+        Long actualPay = order.getActualPay();
+        // 商品描述
+        OrderDetail detail = order.getOrderDetails().get(0);
+        String desc = detail.getTitle();
+        payHelper.createOrder(orderId, actualPay, desc);
+        return null;
+    }
+
+    public void handleNotify(Map<String, String> result) {
+        
     }
 }
