@@ -35,6 +35,9 @@ public enum ExceptionEnum {
     STOCK_NOT_ENOUTH(500, "库存不足"),
     WX_PAY_ORDER_FAIL(500, "微信下单失败"),
     ORDER_STATUS_ERROR(404, "订单状态错误"),
+    INVALID_SIGN_ERROR(400, "签名有误"),
+    INVALID_ORDER_PARAM(400, "订单参数异常"),
+    UPDATE_ORDER_STATUS_ERROR(500, "更新订单状态失败"),
     ;
     private int code;
     private String msg;
